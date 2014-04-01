@@ -25,6 +25,8 @@ import com.microtripit.mandrillapp.lutung.model.MandrillApiError.MandrillError;
 public final class MandrillRequestDispatcher {
 	private static final Log log = LogFactory.getLog(MandrillRequestDispatcher.class);
 	
+	private static final DefaultHttpClient defaultClient = new DefaultHttpClient();
+	
 	public static final <T> T execute(final RequestModel<T> requestModel, 
 			HttpClient client) throws MandrillApiError, IOException {
 
@@ -33,7 +35,7 @@ public final class MandrillRequestDispatcher {
 		try {
 			if(client == null) {
 				log.debug("Using new instance of default http client");
-				client = new DefaultHttpClient();
+				client = defaultClient;
 				client.getParams().setParameter(
 						CoreProtocolPNames.USER_AGENT, 
 						client.getParams().getParameter(CoreProtocolPNames.USER_AGENT)
@@ -42,6 +44,8 @@ public final class MandrillRequestDispatcher {
 			if(log.isDebugEnabled()) {
 				log.debug("starting request '" +requestModel.getUrl()+ "'");
 			}
+
+
 			response = client.execute( requestModel.getRequest() );
 			final StatusLine status = response.getStatusLine();
 			responseInputStream = response.getEntity().getContent();
